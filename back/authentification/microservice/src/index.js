@@ -25,6 +25,20 @@ function signToken(user) {
   return jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
 }
 
+// Simple JWT authentication middleware. Attaches `req.user` with token payload.
+function authenticateJWT(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+  const token = auth.split(' ')[1];
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.user = payload;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+}
+
 app.get('/api/auth/health', (req, res) => res.json({ ok: true }));
 
 app.post('/api/auth/register', async (req, res) => {
@@ -120,6 +134,92 @@ app.post('/api/auth/google', async (req, res) => {
   } catch (err) {
     console.error('Google auth error', err);
     res.status(500).json({ error: 'Google auth failed' });
+  }
+});
+
+// Return current user's profile
+app.get('/api/users/me', authenticateJWT, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await pool.query(
+      'SELECT id, username, email, picture, first_name AS "firstName", last_name AS "lastName", created_at AS "createdAt", last_login AS "lastLogin" FROM users WHERE id = $1',
+      [userId]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    res.json({ user: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Update current user's profile (partial allowed)
+app.put('/api/users/me', authenticateJWT, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // fetch current user
+    const current = await pool.query('SELECT id, username, email, picture, first_name, last_name FROM users WHERE id=$1', [userId]);
+    if (current.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    const existing = current.rows[0];
+
+    const { username, first_name, last_name, picture } = req.body;
+    const newUsername = (typeof username === 'string' && username.length > 0) ? username : existing.username;
+    const newFirst = (typeof first_name === 'string') ? first_name : existing.first_name;
+    const newLast = (typeof last_name === 'string') ? last_name : existing.last_name;
+    const newPicture = (typeof picture === 'string') ? picture : existing.picture;
+
+    const result = await pool.query(
+      'UPDATE users SET username=$1, first_name=$2, last_name=$3, picture=$4, last_login=NOW() WHERE id=$5 RETURNING id, username, email, picture, first_name AS "firstName", last_name AS "lastName", created_at AS "createdAt", last_login AS "lastLogin"',
+      [newUsername, newFirst, newLast, newPicture, userId]
+    );
+    const updated = result.rows[0];
+    res.json({ user: updated });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Get current user's address
+app.get('/api/users/me/address', authenticateJWT, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await pool.query(
+      'SELECT id, user_id AS "userId", line1, line2, city, postal_code AS "postalCode", country, created_at AS "createdAt" FROM addresses WHERE user_id = $1',
+      [userId]
+    );
+    if (result.rows.length === 0) return res.json({ address: null });
+    res.json({ address: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Create or update current user's address
+app.put('/api/users/me/address', authenticateJWT, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { line1, line2, city, postal_code, country } = req.body;
+
+    // Check if address exists
+    const existing = await pool.query('SELECT id FROM addresses WHERE user_id = $1', [userId]);
+    let result;
+    if (existing.rows.length === 0) {
+      result = await pool.query(
+        'INSERT INTO addresses (user_id, line1, line2, city, postal_code, country, created_at) VALUES ($1,$2,$3,$4,$5,$6,NOW()) RETURNING id, user_id AS "userId", line1, line2, city, postal_code AS "postalCode", country, created_at AS "createdAt"',
+        [userId, line1 || null, line2 || null, city || null, postal_code || null, country || null]
+      );
+    } else {
+      result = await pool.query(
+        'UPDATE addresses SET line1=$1, line2=$2, city=$3, postal_code=$4, country=$5 WHERE user_id=$6 RETURNING id, user_id AS "userId", line1, line2, city, postal_code AS "postalCode", country, created_at AS "createdAt"',
+        [line1 || null, line2 || null, city || null, postal_code || null, country || null, userId]
+      );
+    }
+    res.json({ address: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal error' });
   }
 });
 

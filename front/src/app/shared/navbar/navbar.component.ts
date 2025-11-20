@@ -19,6 +19,7 @@ import { AuthService } from '../../core/services/auth.service';
           <div class="flex items-center space-x-4">
             <a routerLink="/" class="text-sm text-gray-700 hover:text-red-600">Accueil</a>
             <a *ngIf="isAuthenticated()" routerLink="/dashboard" class="text-sm text-gray-700 hover:text-red-600">Dashboard</a>
+            <a *ngIf="isAuthenticated()" routerLink="/profile" class="text-sm text-gray-700 hover:text-red-600">Mon profil</a>
             <a *ngIf="!isAuthenticated()" routerLink="/auth/login" class="text-sm text-gray-700 hover:text-red-600">Se connecter</a>
             <a *ngIf="!isAuthenticated()" routerLink="/auth/register" class="text-sm text-gray-700 hover:text-red-600">S'inscrire</a>
             <button *ngIf="isAuthenticated()" (click)="logout()" class="ml-2 px-3 py-1 bg-red-500 text-white rounded text-sm">Déconnexion</button>
