@@ -22,8 +22,6 @@ services:
       PORT: 3000
     depends_on:
       - db-authentification
-    ports:
-      - "3000:3000"
 
   front:
     build:
@@ -41,6 +39,17 @@ services:
       - ./front:/app
       - /app/node_modules
     command: ["npm", "run", "start", "--", "--host", "0.0.0.0", "--port", "4200"]
+
+  reverse-proxy:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    depends_on:
+      - front
+      - microservice-authentification
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/nginx.conf:ro
 
 volumes:
   db_data:

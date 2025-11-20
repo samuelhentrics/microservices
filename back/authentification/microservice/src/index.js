@@ -25,9 +25,9 @@ function signToken(user) {
   return jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
 }
 
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+app.get('/api/auth/health', (req, res) => res.json({ ok: true }));
 
-app.post('/api/register', async (req, res) => {
+app.post('/api/auth/register', async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) return res.status(400).json({ error: 'Missing fields' });
   try {
@@ -48,7 +48,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Missing fields' });
   try {

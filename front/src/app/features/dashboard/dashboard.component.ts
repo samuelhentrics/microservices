@@ -8,7 +8,7 @@ import { User } from '../../core/models/user.model';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule],
   template: `
     <div class="min-h-screen bg-gray-100">
 

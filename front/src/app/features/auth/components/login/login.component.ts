@@ -28,16 +28,22 @@ import { AuthService } from '../../../../core/services/auth.service';
 
           <div class="mt-6 grid grid-cols-1 gap-3 text-sm">
             <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
-              <span class="text-lg">🧀</span>
-              <span>Producteurs & artisans du Pays Basque</span>
+              <span class="inline-flex items-center">
+                <svg viewBox="0 0 3 2" class="w-6 h-4 rounded-sm shadow-sm" role="img" aria-label="Drapeau du Pays Basque">
+                  <rect width="3" height="2" fill="#D52B1E"></rect>
+                  <path d="M0 0 L3 2 M3 0 L0 2" stroke="#009B3A" stroke-width="0.45"></path>
+                  <path d="M1.5 0 V2 M0 1 H3" stroke="#FFFFFF" stroke-width="0.32"></path>
+                </svg>
+              </span>
+              <span>Producteurs & Artisans du Pays Basque</span>
             </div>
             <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
               <span class="text-lg">🚚</span>
-              <span>Livraison soignée partout en France</span>
+              <span>Livraison partout en France</span>
             </div>
             <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
               <span class="text-lg">🔒</span>
-              <span>Paiement sécurisé & données protégées</span>
+              <span>Paiement sécurisé</span>
             </div>
           </div>
 
@@ -98,7 +104,7 @@ import { AuthService } from '../../../../core/services/auth.service';
                   class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400
                          focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 sm:text-sm"
                   [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-                  placeholder="ex: votre@email.com"
+                  placeholder="Votre adresse email"
                 />
               </div>
               <p *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
