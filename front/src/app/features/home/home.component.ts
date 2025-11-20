@@ -29,9 +29,12 @@ export class HomeComponent {
   year = new Date().getFullYear();
 
   products: Product[] = [
-    { id: 1, name: 'Plateau de fromages fermiers', price: 24.9, category: 'Fromages', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=60', description: 'Assortiment de 4 fromages artisanaux.' },
-    { id: 2, name: 'Saucisson sec traditionnel', price: 12.5, category: 'Saucissons', image: 'https://images.unsplash.com/photo-1601924638867-3ec68b5b5227?auto=format&fit=crop&w=1200&q=60', description: 'Saucisson de porc fermier, affiné 6 semaines.' },
-    { id: 3, name: 'Pâté de campagne', price: 8.0, category: 'Pâtés', image: 'https://images.unsplash.com/photo-1544025162-0c2242e3b2a2?auto=format&fit=crop&w=1200&q=60', description: 'Pâté maison à l’ancienne.' }
+    { id: 1, name: 'Plateau de fromages fermiers', price: 24.9, category: 'Fromages', 
+      image: 'https://odelices.ouest-france.fr/images/articles/plateau-fromages.jpg', description: 'Assortiment de 4 fromages artisanaux.' },
+    { id: 2, name: 'Saucisson sec traditionnel', price: 12.5, category: 'Saucissons', 
+      image: 'https://e4axzwka7un.exactdn.com/wp-content/uploads/2025/09/recette-saucisson-sec-de-campagne.jpg?strip=all&lossy=1&resize=536%2C366&ssl=1', description: 'Saucisson de porc fermier, affiné 6 semaines.' },
+    { id: 3, name: 'Pâté de campagne', price: 8.0, category: 'Pâtés', 
+      image: 'https://www.coopchezvous.com/img/recipe/262.webp', description: 'Pâté maison à l’ancienne.' }
   ];
 
   viewProduct(id: number): void {
