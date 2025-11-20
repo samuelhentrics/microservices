@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: login_user
+      POSTGRES_PASSWORD: login_pass
+      POSTGRES_DB: login_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init-db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+
+  back:
+    build:
+      context: ./back
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://login_user:login_pass@db:5432/login_db
+      PORT: 3000
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  front:
+    build:
+      context: ./front
+    restart: unless-stopped
+    depends_on:
+      - back
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "4200:4200"
+    # Mount the front source for live edits and let the container run `ng serve`.
+    # This avoids rebuilding the image when you change TS/HTML/CSS.
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    command: ["npm", "run", "start", "--", "--host", "0.0.0.0", "--port", "4200"]
+
+volumes:
+  db_data:

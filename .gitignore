@@ -1,0 +1,7 @@
+node_modules/
+back/authentification/microservice/node_modules/
+front/node_modules/
+dist/
+/.idea
+.vscode
+.DS_Store
