@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,29 +11,70 @@ import { AuthService } from '../../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, HttpClientModule],
   template: `
-    <div class="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <!-- left panel: marketing / brand -->
-        <div class="hidden md:flex flex-col justify-center px-6">
-          <div class="mb-6">
-            <h1 class="text-3xl font-extrabold text-indigo-700">MonApp</h1>
-            <p class="mt-2 text-gray-600">Accédez à votre tableau de bord et gérez votre compte en toute simplicité.</p>
+    <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+      <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+
+        <!-- LEFT / BRAND -->
+        <div class="hidden md:flex flex-col justify-center rounded-2xl bg-white/70 backdrop-blur border border-amber-100 p-8 shadow-sm">
+          <img src="logo.png" alt="The Terroir - Pays Basque" class="w-full max-w-sm mx-auto mb-8 drop-shadow-sm" />
+
+          <h1 class="text-3xl font-extrabold text-emerald-900 tracking-tight">
+            Le Terroir Basque, chez vous 
+          </h1>
+          <p class="mt-3 text-emerald-950/80 leading-relaxed">
+            Accédez à votre espace pour commander et retrouver vos produits locaux :
+            <span class="font-semibold">fromages, charcuteries, piments, douceurs artisanales…</span>
+          </p>
+
+          <div class="mt-6 grid grid-cols-1 gap-3 text-sm">
+            <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
+              <span class="text-lg">🧀</span>
+              <span>Producteurs & artisans du Pays Basque</span>
+            </div>
+            <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
+              <span class="text-lg">🚚</span>
+              <span>Livraison soignée partout en France</span>
+            </div>
+            <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
+              <span class="text-lg">🔒</span>
+              <span>Paiement sécurisé & données protégées</span>
+            </div>
           </div>
-          <div class="rounded-lg bg-indigo-50 p-4">
-            <p class="text-sm text-indigo-600">Sécurité, confidentialité et connexion rapide.</p>
+
+          <div class="mt-8 rounded-xl bg-emerald-900 text-amber-50 p-4">
+            <p class="text-sm italic">
+              “Une sélection authentique, directement depuis les fermes et ateliers locaux.”
+            </p>
+            <p class="text-xs mt-2 opacity-80">— L’équipe The Terroir</p>
           </div>
         </div>
 
-        <!-- right panel: card -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mx-auto max-w-md w-full">
-          <div class="flex justify-between items-center mb-4">
-            <button type="button" (click)="goHome()" class="text-sm text-indigo-600 hover:text-indigo-500">← Accueil</button>
-            <a routerLink="/auth/register" class="text-sm text-gray-600 hover:text-gray-800">Créer un compte</a>
+        <!-- RIGHT / LOGIN CARD -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-7 md:p-8 mx-auto w-full max-w-md flex flex-col justify-center">
+          <div class="flex justify-between items-center mb-5">
+            <button type="button" (click)="goHome()"
+              class="text-sm text-emerald-700 hover:text-emerald-600 font-medium">
+              ← Accueil
+            </button>
+            <a routerLink="/auth/register"
+               class="text-sm text-gray-600 hover:text-gray-900">
+              Créer un compte
+            </a>
           </div>
 
-          <h2 class="text-center text-2xl font-semibold text-gray-800 mb-4">Connexion</h2>
+          <!-- Small logo on mobile -->
+          <div class="md:hidden mb-6">
+            <img src="logo.png" alt="The Terroir - Pays Basque" class="w-56 mx-auto" />
+          </div>
 
-          <!-- Google button area (rendered by Google Identity SDK) -->
+          <h2 class="text-center text-2xl font-semibold text-emerald-950 mb-2">
+            Connexion
+          </h2>
+          <p class="text-center text-sm text-gray-600 mb-5">
+            Retrouvez vos commandes, adresses et favoris.
+          </p>
+
+          <!-- Google button area -->
           <div id="googleButton" class="flex justify-center mb-4"></div>
 
           <!-- separator -->
@@ -45,28 +86,50 @@ import { AuthService } from '../../../../core/services/auth.service';
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
             <div>
-              <label for="email" class="block text-sm font-medium text-gray-700">Adresse e-mail</label>
+              <label for="email" class="block text-sm font-medium text-gray-800">
+                Adresse e-mail
+              </label>
               <div class="mt-1">
-                <input id="email" type="email" formControlName="email" autocomplete="email"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" />
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 sm:text-sm"
+                  [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                  placeholder="ex: votre@email.com"
+                />
               </div>
-              <p *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="mt-1 text-xs text-red-600">
+              <p *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                 class="mt-1 text-xs text-red-600">
                 <span *ngIf="loginForm.get('email')?.errors?.['required']">L'email est requis.</span>
                 <span *ngIf="loginForm.get('email')?.errors?.['email']">Format d'email invalide.</span>
               </p>
             </div>
 
             <div>
-              <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+              <label for="password" class="block text-sm font-medium text-gray-800">
+                Mot de passe
+              </label>
               <div class="mt-1">
-                <input id="password" type="password" formControlName="password" autocomplete="current-password"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
+                <input
+                  id="password"
+                  type="password"
+                  formControlName="password"
+                  autocomplete="current-password"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 sm:text-sm"
+                  [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                  placeholder="Votre mot de passe"
+                />
               </div>
-              <p *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="mt-1 text-xs text-red-600">
+              <p *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                 class="mt-1 text-xs text-red-600">
                 <span *ngIf="loginForm.get('password')?.errors?.['required']">Le mot de passe est requis.</span>
-                <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Le mot de passe est trop court (min 6 caractères).</span>
+                <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
+                  Le mot de passe est trop court (min 6 caractères).
+                </span>
               </p>
             </div>
 
@@ -75,11 +138,19 @@ import { AuthService } from '../../../../core/services/auth.service';
             </div>
 
             <div>
-              <button type="submit" [disabled]="loading()"
-                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 disabled:opacity-60">
-                <svg *ngIf="loading()" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              <button
+                type="submit"
+                [disabled]="loading()"
+                class="w-full flex items-center justify-center gap-2 px-4 py-2
+                       bg-emerald-700 text-white font-semibold rounded-md
+                       hover:bg-emerald-800 disabled:opacity-60 transition"
+              >
+                <svg *ngIf="loading()" class="animate-spin h-5 w-5 text-white"
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10"
+                          stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
                 <span *ngIf="loading(); else notLoading">Connexion...</span>
                 <ng-template #notLoading>Se connecter</ng-template>
@@ -87,16 +158,23 @@ import { AuthService } from '../../../../core/services/auth.service';
             </div>
 
             <div class="text-sm text-center">
-              <a routerLink="/auth/register" class="font-medium text-indigo-600 hover:text-indigo-500">Pas encore de compte ? S'inscrire</a>
+              <a routerLink="/auth/register"
+                 class="font-medium text-emerald-700 hover:text-emerald-600">
+                Pas encore de compte ? S'inscrire
+              </a>
             </div>
+
+            <p class="text-[11px] text-center text-gray-400 pt-2">
+              En vous connectant, vous acceptez nos conditions et notre politique de confidentialité.
+            </p>
           </form>
         </div>
+
       </div>
     </div>
   `
 })
 export class LoginComponent {
-  // add HttpClient for Google token exchange
   private http = inject(HttpClient);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -112,7 +190,6 @@ export class LoginComponent {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    // load Google Identity Services if client id provided
     if (environment.googleClientId) {
       const existing = document.getElementById('google-sdk');
       if (!existing) {
@@ -131,14 +208,16 @@ export class LoginComponent {
 
   private initGoogle() {
     try {
-      // @ts-ignore
       const gid = (window as any).google?.accounts?.id;
       if (!gid) return;
-      // @ts-ignore
-      google.accounts.id.initialize({ client_id: environment.googleClientId, callback: (res: any) => this.onGoogleCredential(res) });
-      // render the button
-      // @ts-ignore
-      google.accounts.id.renderButton(document.getElementById('googleButton'), { theme: 'outline', size: 'large', width: 300 });
+      (window as any).google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: (res: any) => this.onGoogleCredential(res)
+      });
+      (window as any).google.accounts.id.renderButton(
+        document.getElementById('googleButton'),
+        { theme: 'outline', size: 'large', width: 300 }
+      );
     } catch (err) {
       console.warn('Google Identity SDK failed to initialize', err);
     }
@@ -147,10 +226,11 @@ export class LoginComponent {
   private onGoogleCredential(res: any) {
     const idToken = res?.credential;
     if (!idToken) return;
+
     this.loading.set(true);
+
     this.http.post(`${environment.apiUrl}/auth/google`, { idToken }).subscribe({
       next: (response: any) => {
-        // process response through AuthService
         this.authService.processAuthResponse(response);
         this.router.navigate(['/dashboard']);
       },
@@ -171,7 +251,11 @@ export class LoginComponent {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          const msg = error?.error?.error || error?.error?.message || error?.message || 'Une erreur est survenue';
+          const msg =
+            error?.error?.error ||
+            error?.error?.message ||
+            error?.message ||
+            'Une erreur est survenue';
           this.errorMessage.set(msg);
           this.loading.set(false);
         }
@@ -179,7 +263,6 @@ export class LoginComponent {
     }
   }
 
-  // Navigate back to home
   goHome(): void {
     this.router.navigate(['/']);
   }
