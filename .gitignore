@@ -1,9 +1,9 @@
 node_modules/
 back/authentification/microservice/node_modules/
 front/node_modules/
-.env
 back/authentification/microservice/.env
-front/.env
+front/src/environments/environment.ts
+front/src/environments/environment.development.ts
 dist/
 /.idea
 .vscode
