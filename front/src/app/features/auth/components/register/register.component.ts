@@ -14,13 +14,13 @@ import { environment } from '../../../../../environments/environment';
     <div class="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div class="hidden md:flex flex-col justify-center px-6">
-          <h1 class="text-3xl font-extrabold text-indigo-700">Créer un compte</h1>
+          <h1 class="text-3xl font-extrabold text-red-700">Créer un compte</h1>
           <p class="mt-2 text-gray-600">Inscrivez-vous rapidement avec votre compte Google ou créez un compte local.</p>
         </div>
 
         <div class="bg-white rounded-xl shadow-lg p-6 mx-auto max-w-md w-full">
           <div class="flex justify-between items-center mb-4">
-            <button type="button" (click)="goHome()" class="text-sm text-indigo-600 hover:text-indigo-500">← Accueil</button>
+            <button type="button" (click)="goHome()" class="text-sm text-red-600 hover:text-red-500">← Accueil</button>
             <a routerLink="/auth/login" class="text-sm text-gray-600 hover:text-gray-800">Se connecter</a>
           </div>
 
@@ -41,7 +41,7 @@ import { environment } from '../../../../../environments/environment';
               <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
               <div class="mt-1">
                 <input id="username" type="text" formControlName="username" autocomplete="username"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
                   [class.border-red-500]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" />
               </div>
               <p *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="mt-1 text-xs text-red-600">
@@ -55,7 +55,7 @@ import { environment } from '../../../../../environments/environment';
               <label for="email" class="block text-sm font-medium text-gray-700">Adresse e-mail</label>
               <div class="mt-1">
                 <input id="email" type="email" formControlName="email" autocomplete="email"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
                   [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" />
               </div>
               <p *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="mt-1 text-xs text-red-600">
@@ -69,7 +69,7 @@ import { environment } from '../../../../../environments/environment';
               <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
               <div class="mt-1">
                 <input id="password" type="password" formControlName="password" autocomplete="new-password"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
                   [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" />
               </div>
               <p *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="mt-1 text-xs text-red-600">
@@ -83,7 +83,7 @@ import { environment } from '../../../../../environments/environment';
               <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmer le mot de passe</label>
               <div class="mt-1">
                 <input id="confirmPassword" type="password" formControlName="confirmPassword" autocomplete="new-password"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
                   [class.border-red-500]="(registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) || (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched)" />
               </div>
               <p *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="mt-1 text-xs text-red-600">
@@ -99,7 +99,7 @@ import { environment } from '../../../../../environments/environment';
             <!-- Submit Button -->
             <div>
               <button type="submit" [disabled]="loading()"
-                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 disabled:opacity-60">
+                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 disabled:opacity-60">
                 <svg *ngIf="loading()" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
@@ -110,7 +110,7 @@ import { environment } from '../../../../../environments/environment';
             </div>
 
             <div class="text-sm text-center">
-              <a routerLink="/auth/login" class="font-medium text-indigo-600 hover:text-indigo-500">Déjà un compte ? Se connecter</a>
+              <a routerLink="/auth/login" class="font-medium text-red-600 hover:text-red-500">Déjà un compte ? Se connecter</a>
             </div>
           </form>
         </div>
