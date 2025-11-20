@@ -1,17 +1,3 @@
-DROP TABLE IF EXISTS cart_items;
-DROP TABLE IF EXISTS carts;
-DROP TABLE IF EXISTS users;
-
-
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(150) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    created_at TIMESTAMP DEFAULT NOW()
-);
 
 CREATE TABLE carts (
     id SERIAL PRIMARY KEY,
