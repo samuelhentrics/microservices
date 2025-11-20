@@ -14,7 +14,7 @@ docker compose up --build
 ```
 
 Services:
-- Postgres on port 5432 (database: `login_db`, user `login_user`, password `login_pass`)
+- Postgres on port 5432 (database: `users`, user `login_user`, password `login_pass`)
 - Backend on port 3000 (API under `/api`)
 - Front served on host port 4200 (nginx proxies `/api` to backend)
 

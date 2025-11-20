@@ -6,8 +6,8 @@ import { Component } from '@angular/core';
   template: `
     <footer class="bg-gray-800 text-gray-200 py-6">
       <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-3">
-        <div class="text-sm">© {{ currentYear }} MyLoginApp</div>
-        <div class="text-sm">Projet de démonstration — Authentification basique (Express + Postgres)</div>
+        <div class="text-sm">© {{ currentYear }} TheTerroir</div>
+        <div class="text-sm">Produits du terroir sélectionnés avec soin.</div>
       </div>
     </footer>
   `
