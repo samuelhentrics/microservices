@@ -1,6 +1,9 @@
 node_modules/
 back/authentification/microservice/node_modules/
 front/node_modules/
+.env
+back/authentification/microservice/.env
+front/.env
 dist/
 /.idea
 .vscode

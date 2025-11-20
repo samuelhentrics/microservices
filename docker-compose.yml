@@ -1,27 +1,27 @@
 version: '3.8'
 services:
-  db:
+  db-authentification:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_USER: login_user
-      POSTGRES_PASSWORD: login_pass
-      POSTGRES_DB: login_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: users
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./db/init-db:/docker-entrypoint-initdb.d:ro
     ports:
       - "5432:5432"
 
-  back:
+  microservice-authentification:
     build:
-      context: ./back
+      context: ./back/authentification/microservice
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgres://login_user:login_pass@db:5432/login_db
+      DATABASE_URL: postgres://user:password@db-authentification:5432/users
       PORT: 3000
     depends_on:
-      - db
+      - db-authentification
     ports:
       - "3000:3000"
 
@@ -30,7 +30,7 @@ services:
       context: ./front
     restart: unless-stopped
     depends_on:
-      - back
+      - microservice-authentification
     environment:
       - NODE_ENV=development
     ports:
