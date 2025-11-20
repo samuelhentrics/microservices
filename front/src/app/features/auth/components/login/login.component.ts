@@ -206,9 +206,21 @@ export class LoginComponent {
         script.defer = true;
         script.onload = () => this.initGoogle();
         document.head.appendChild(script);
-      } else {
+      }
+      // if script already exists, defer initialization to ngAfterViewInit so the button container exists
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (!environment.googleClientId) return;
+    try {
+      // @ts-ignore
+      const gid = (window as any).google?.accounts?.id;
+      if (gid) {
         this.initGoogle();
       }
+    } catch (err) {
+      // ignore
     }
   }
 

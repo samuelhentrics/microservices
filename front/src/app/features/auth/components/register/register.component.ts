@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -230,7 +230,7 @@ import { environment } from '../../../../../environments/environment';
     </div>
   `
 })
-export class RegisterComponent {
+export class RegisterComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -256,11 +256,24 @@ export class RegisterComponent {
         script.id = 'google-sdk';
         script.async = true;
         script.defer = true;
+        // init will be called on load (and also in ngAfterViewInit if already present)
         script.onload = () => this.initGoogle();
         document.head.appendChild(script);
-      } else {
+      }
+      // if script already exists, defer initialization to ngAfterViewInit so the button container exists
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (!environment.googleClientId) return;
+    try {
+      // @ts-ignore
+      const gid = (window as any).google?.accounts?.id;
+      if (gid) {
         this.initGoogle();
       }
+    } catch (err) {
+      // ignore
     }
   }
 
