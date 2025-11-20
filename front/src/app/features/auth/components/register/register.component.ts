@@ -11,24 +11,79 @@ import { environment } from '../../../../../environments/environment';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, HttpClientModule],
   template: `
-    <div class="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div class="hidden md:flex flex-col justify-center px-6">
-          <h1 class="text-3xl font-extrabold text-red-700">Créer un compte</h1>
-          <p class="mt-2 text-gray-600">Inscrivez-vous rapidement avec votre compte Google ou créez un compte local.</p>
-        </div>
+    <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+      <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
 
-        <div class="bg-white rounded-xl shadow-lg p-6 mx-auto max-w-md w-full">
-          <div class="flex justify-between items-center mb-4">
-            <button type="button" (click)="goHome()" class="text-sm text-red-600 hover:text-red-500">← Accueil</button>
-            <a routerLink="/auth/login" class="text-sm text-gray-600 hover:text-gray-800">Se connecter</a>
+        <!-- LEFT / BRAND -->
+        <div class="hidden md:flex flex-col justify-center rounded-2xl bg-white/70 backdrop-blur border border-amber-100 p-8 shadow-sm">
+          <img src="logo.png" alt="The Terroir - Pays Basque" class="w-full max-w-sm mx-auto mb-8 drop-shadow-sm" />
+
+          <h1 class="text-3xl font-extrabold text-emerald-900 tracking-tight">
+            Créez votre compte
+          </h1>
+          <p class="mt-3 text-emerald-950/80 leading-relaxed">
+            Rejoignez <span class="font-semibold">The Terroir</span> et profitez d’une sélection
+            authentique de produits du Pays Basque, livrés chez vous.
+          </p>
+
+          <div class="mt-6 grid grid-cols-1 gap-3 text-sm">
+            <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
+              <span class="inline-flex items-center">
+                <svg viewBox="0 0 3 2" class="w-6 h-4 rounded-sm shadow-sm" role="img" aria-label="Drapeau du Pays Basque">
+                  <rect width="3" height="2" fill="#D52B1E"></rect>
+                  <path d="M0 0 L3 2 M3 0 L0 2" stroke="#009B3A" stroke-width="0.45"></path>
+                  <path d="M1.5 0 V2 M0 1 H3" stroke="#FFFFFF" stroke-width="0.32"></path>
+                </svg>
+              </span>
+              <span>Producteurs & Artisans du Pays Basque</span>
+            </div>
+            <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
+              <span class="text-lg">🚚</span>
+              <span>Livraison partout en France</span>
+            </div>
+            <div class="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-emerald-900">
+              <span class="text-lg">🔒</span>
+              <span>Paiement sécurisé</span>
+            </div>
           </div>
 
-          <h2 class="text-center text-2xl font-semibold text-gray-800 mb-4">Inscription</h2>
+          <div class="mt-8 rounded-xl bg-emerald-900 text-amber-50 p-4">
+            <p class="text-sm italic">
+              “Une sélection authentique, directement depuis les fermes et ateliers locaux.”
+            </p>
+            <p class="text-xs mt-2 opacity-80">— L’équipe The Terroir</p>
+          </div>
+        </div>
 
-          <!-- Google button area (rendered by Google Identity SDK) -->
+        <!-- RIGHT / REGISTER CARD -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-7 md:p-8 mx-auto w-full max-w-md flex flex-col justify-center">
+          <div class="flex justify-between items-center mb-5">
+            <button type="button" (click)="goHome()"
+              class="text-sm text-emerald-700 hover:text-emerald-600 font-medium">
+              ← Accueil
+            </button>
+            <a routerLink="/auth/login"
+               class="text-sm text-gray-600 hover:text-gray-900">
+              Se connecter
+            </a>
+          </div>
+
+          <!-- Small logo on mobile -->
+          <div class="md:hidden mb-6">
+            <img src="logo.png" alt="The Terroir - Pays Basque" class="w-56 mx-auto" />
+          </div>
+
+          <h2 class="text-center text-2xl font-semibold text-emerald-950 mb-2">
+            Inscription
+          </h2>
+          <p class="text-center text-sm text-gray-600 mb-5">
+            Créez votre compte pour suivre vos commandes et favoris.
+          </p>
+
+          <!-- Google button area -->
           <div id="googleButton" class="flex justify-center mb-4"></div>
 
+          <!-- separator -->
           <div class="flex items-center my-3">
             <div class="flex-1 h-px bg-gray-200"></div>
             <div class="px-3 text-xs text-gray-500">ou</div>
@@ -38,13 +93,23 @@ import { environment } from '../../../../../environments/environment';
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
             <!-- Username -->
             <div>
-              <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+              <label for="username" class="block text-sm font-medium text-gray-800">
+                Nom d'utilisateur
+              </label>
               <div class="mt-1">
-                <input id="username" type="text" formControlName="username" autocomplete="username"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                  [class.border-red-500]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" />
+                <input
+                  id="username"
+                  type="text"
+                  formControlName="username"
+                  autocomplete="username"
+                  placeholder="Votre nom d'utilisateur"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 sm:text-sm"
+                  [class.border-red-500]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+                />
               </div>
-              <p *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="mt-1 text-xs text-red-600">
+              <p *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+                 class="mt-1 text-xs text-red-600">
                 <span *ngIf="registerForm.get('username')?.errors?.['required']">Le nom d'utilisateur est requis.</span>
                 <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Minimum 3 caractères.</span>
               </p>
@@ -52,13 +117,23 @@ import { environment } from '../../../../../environments/environment';
 
             <!-- Email -->
             <div>
-              <label for="email" class="block text-sm font-medium text-gray-700">Adresse e-mail</label>
+              <label for="email" class="block text-sm font-medium text-gray-800">
+                Adresse e-mail
+              </label>
               <div class="mt-1">
-                <input id="email" type="email" formControlName="email" autocomplete="email"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                  [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" />
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  placeholder="Votre adresse email"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 sm:text-sm"
+                  [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+                />
               </div>
-              <p *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="mt-1 text-xs text-red-600">
+              <p *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+                 class="mt-1 text-xs text-red-600">
                 <span *ngIf="registerForm.get('email')?.errors?.['required']">L'email est requis.</span>
                 <span *ngIf="registerForm.get('email')?.errors?.['email']">Format d'email invalide.</span>
               </p>
@@ -66,13 +141,23 @@ import { environment } from '../../../../../environments/environment';
 
             <!-- Password -->
             <div>
-              <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+              <label for="password" class="block text-sm font-medium text-gray-800">
+                Mot de passe
+              </label>
               <div class="mt-1">
-                <input id="password" type="password" formControlName="password" autocomplete="new-password"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                  [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" />
+                <input
+                  id="password"
+                  type="password"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  placeholder="Minimum 6 caractères"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 sm:text-sm"
+                  [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+                />
               </div>
-              <p *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="mt-1 text-xs text-red-600">
+              <p *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+                 class="mt-1 text-xs text-red-600">
                 <span *ngIf="registerForm.get('password')?.errors?.['required']">Le mot de passe est requis.</span>
                 <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Minimum 6 caractères.</span>
               </p>
@@ -80,13 +165,24 @@ import { environment } from '../../../../../environments/environment';
 
             <!-- Confirm Password -->
             <div>
-              <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmer le mot de passe</label>
+              <label for="confirmPassword" class="block text-sm font-medium text-gray-800">
+                Confirmer le mot de passe
+              </label>
               <div class="mt-1">
-                <input id="confirmPassword" type="password" formControlName="confirmPassword" autocomplete="new-password"
-                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                  [class.border-red-500]="(registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) || (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched)" />
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  formControlName="confirmPassword"
+                  autocomplete="new-password"
+                  placeholder="Retapez le mot de passe"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 sm:text-sm"
+                  [class.border-red-500]="(registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched)
+                    || (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched)"
+                />
               </div>
-              <p *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="mt-1 text-xs text-red-600">
+              <p *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched"
+                 class="mt-1 text-xs text-red-600">
                 Les mots de passe ne correspondent pas.
               </p>
             </div>
@@ -98,11 +194,19 @@ import { environment } from '../../../../../environments/environment';
 
             <!-- Submit Button -->
             <div>
-              <button type="submit" [disabled]="loading()"
-                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 disabled:opacity-60">
-                <svg *ngIf="loading()" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              <button
+                type="submit"
+                [disabled]="loading()"
+                class="w-full flex items-center justify-center gap-2 px-4 py-2
+                       bg-emerald-700 text-white font-semibold rounded-md
+                       hover:bg-emerald-800 disabled:opacity-60 transition"
+              >
+                <svg *ngIf="loading()" class="animate-spin h-5 w-5 text-white"
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10"
+                          stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
                 <span *ngIf="loading(); else notLoading">Inscription...</span>
                 <ng-template #notLoading>S'inscrire</ng-template>
@@ -110,10 +214,18 @@ import { environment } from '../../../../../environments/environment';
             </div>
 
             <div class="text-sm text-center">
-              <a routerLink="/auth/login" class="font-medium text-red-600 hover:text-red-500">Déjà un compte ? Se connecter</a>
+              <a routerLink="/auth/login"
+                 class="font-medium text-emerald-700 hover:text-emerald-600">
+                Déjà un compte ? Se connecter
+              </a>
             </div>
+
+            <p class="text-[11px] text-center text-gray-400 pt-2">
+              En créant un compte, vous acceptez nos conditions et notre politique de confidentialité.
+            </p>
           </form>
         </div>
+
       </div>
     </div>
   `
@@ -135,7 +247,7 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
-    // load Google Identity Services if client id provided
+
     if (environment.googleClientId) {
       const existing = document.getElementById('google-sdk');
       if (!existing) {
@@ -154,14 +266,18 @@ export class RegisterComponent {
 
   private initGoogle() {
     try {
-      // @ts-ignore
       const gid = (window as any).google?.accounts?.id;
       if (!gid) return;
-      // @ts-ignore
-      google.accounts.id.initialize({ client_id: environment.googleClientId, callback: (res: any) => this.onGoogleCredential(res) });
-      // render the button
-      // @ts-ignore
-      google.accounts.id.renderButton(document.getElementById('googleButton'), { theme: 'outline', size: 'large', width: 300 });
+
+      (window as any).google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: (res: any) => this.onGoogleCredential(res)
+      });
+
+      (window as any).google.accounts.id.renderButton(
+        document.getElementById('googleButton'),
+        { theme: 'outline', size: 'large', width: 300 }
+      );
     } catch (err) {
       console.warn('Google Identity SDK failed to initialize', err);
     }
@@ -170,7 +286,9 @@ export class RegisterComponent {
   private onGoogleCredential(res: any) {
     const idToken = res?.credential;
     if (!idToken) return;
+
     this.loading.set(true);
+
     this.http.post(`${environment.apiUrl}/auth/google`, { idToken }).subscribe({
       next: (response: any) => {
         this.authService.processAuthResponse(response);
@@ -186,9 +304,9 @@ export class RegisterComponent {
   passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
-    
+
     if (password && confirmPassword && password.value !== confirmPassword.value) {
-      return { 'passwordMismatch': true };
+      return { passwordMismatch: true };
     }
     return null;
   }
@@ -203,7 +321,11 @@ export class RegisterComponent {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          const msg = error?.error?.error || error?.error?.message || error?.message || 'Une erreur est survenue';
+          const msg =
+            error?.error?.error ||
+            error?.error?.message ||
+            error?.message ||
+            'Une erreur est survenue';
           this.errorMessage.set(msg);
           this.loading.set(false);
         }
@@ -211,7 +333,6 @@ export class RegisterComponent {
     }
   }
 
-  // Navigate back to home
   goHome(): void {
     this.router.navigate(['/']);
   }
