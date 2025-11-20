@@ -25,6 +25,7 @@ CREATE TABLE products (
                           origin     VARCHAR(255),        -- provenance du produit
                           image_url  VARCHAR(512) NOT NULL, -- lien vers l'image du produit
 
+    -- Obligatoire : chaque produit a un animal et un type
                           animal_id  INTEGER NOT NULL,
                           type_id    INTEGER NOT NULL,
 
