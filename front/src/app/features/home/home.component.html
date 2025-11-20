@@ -1,0 +1,55 @@
+<!-- Hero -->
+<!-- Hero with categories overlay -->
+<section 
+  class="relative h-[40vh] flex items-end bg-cover bg-center"
+  style="background-image: url('https://respyrenees.com/images/webresa/528/rando-guidee-pays-basque.jpg')">
+
+  <!-- Overlay -->
+  <div class="absolute inset-0 bg-black/55"></div>
+
+  <!-- Hero content -->
+  <div class="absolute top-1/3 left-1/2 -translate-x-1/2 z-10 max-w-xl px-4 text-white text-center">
+    <p class="text-lg sm:text-2xl font-bold">
+      Produits artisanaux du terroir sélectionnés par des producteurs locaux
+    </p>
+  </div>
+
+  <!-- Categories floating at bottom -->
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-20 w-full">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+        <ng-container *ngFor="let item of [
+          {icon:'🧀', label:'Fromages', desc:'Affinés et artisanaux', cat:'fromages'},
+          {icon:'🥓', label:'Saucissons', desc:'Séchés traditionnellement', cat:'saucissons'},
+          {icon:'🥧', label:'Pâtés', desc:'Recettes de terroir', cat:'pates'},
+          {icon:'🍖', label:'Jambons', desc:'Tranchés à la demande', cat:'jambons'}
+        ]">
+
+          <a
+            [routerLink]="['/products']"
+            [queryParams]="{category: item.cat}"
+            class="bg-white/95 p-4 rounded-lg flex flex-col items-center text-center hover:shadow transition-transform transform hover:-translate-y-1">
+
+            <div class="text-3xl">{{ item.icon }}</div>
+            <div class="font-semibold mt-2 text-gray-800">{{ item.label }}</div>
+            <p class="text-xs text-gray-500 mt-1">{{ item.desc }}</p>
+          </a>
+
+        </ng-container>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Featured products -->
+<section class="mt-12 py-12 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-2xl font-bold mb-6">Produits mis en avant</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <app-product-card *ngFor="let p of products" [product]="p" (view)="viewProduct($event)"></app-product-card>
+    </div>
+  </div>
+</section>
