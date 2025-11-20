@@ -17,7 +17,7 @@ interface Product {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarComponent, ProductCardComponent],
+  imports: [CommonModule, RouterLink, ProductCardComponent],
   templateUrl: './home.component.html'
 })
 export class HomeComponent {

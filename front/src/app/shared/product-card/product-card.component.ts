@@ -25,7 +25,8 @@ export interface Product {
           <div class="text-red-600 font-bold">{{product?.price}} €</div>
           <div class="flex items-center gap-2">
             <a [routerLink]="['/products', product?.id]" class="px-3 py-1 bg-red-600 text-white rounded">Voir</a>
-            <button (click)="addToCart()" class="px-3 py-1 border rounded">Ajouter</button>
+            <button (click)="addToCart()" class="px-3 py-1 border rounded">🛒 Ajouter </button>
+
           </div>
         </div>
       </div>

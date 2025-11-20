@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
-  appName: 'MyLoginApp Dev',
+  apiUrl: 'http://localhost:80/api',
+  appName: 'TheTerroir Dev',
   googleClientId: ''
 };
