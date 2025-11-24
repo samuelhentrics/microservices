@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   category: string;
@@ -39,8 +39,8 @@ export interface Product {
 })
 export class ProductCardComponent {
   @Input({ required: true }) product!: Product | null;
-  @Output() view = new EventEmitter<number>();
-  @Output() add = new EventEmitter<number>();
+  @Output() view = new EventEmitter<string>();
+  @Output() add = new EventEmitter<string>();
 
   viewProduct(): void {
     if (this.product) {

@@ -19,7 +19,7 @@ export class ProductsComponent {
   products: Product[] = [];
 
   constructor(private router: Router, private productService: ProductService) {
-    this.products = this.productService.getProducts();
+    this.productService.getProducts().subscribe(list => this.products = list);
   }
 
   get categories(): string[] {
@@ -39,7 +39,7 @@ export class ProductsComponent {
     });
   }
 
-  viewProduct(id: number) {
+  viewProduct(id: string) {
     this.router.navigate(['/products', id]);
   }
 

@@ -23,6 +23,29 @@ services:
     depends_on:
       - db-authentification
 
+  db-products:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: products
+    volumes:
+      - db_products_data:/var/lib/postgresql/data
+      - ./back/products/db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5433:5432"
+
+  products:
+    build:
+      context: ./back/products/microservice
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://user:password@db-products:5432/products
+      PORT: 3000
+    depends_on:
+      - db-products
+
   front:
     build:
       context: ./front
@@ -81,3 +104,4 @@ volumes:
   db_data:
   grafana_data:
   pgadmin_data:
+  db_products_data:

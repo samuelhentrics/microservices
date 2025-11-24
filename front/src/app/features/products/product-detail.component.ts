@@ -14,10 +14,9 @@ export class ProductDetailComponent {
   product: Product | null = null;
 
   constructor(private route: ActivatedRoute, private router: Router, private productService: ProductService) {
-    const idStr = this.route.snapshot.paramMap.get('id');
-    const id = idStr ? Number(idStr) : NaN;
-    if (!isNaN(id)) {
-      this.product = this.productService.getProductById(id);
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.productService.getProductById(id).subscribe(p => this.product = p, () => this.product = null);
     }
   }
 
