@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Product } from '../../shared/product-card/product-card.component';
+import { Product } from '../../core/models/product.model';
 import { ProductService } from '../../core/services/product.service';
 
 @Component({

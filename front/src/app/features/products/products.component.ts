@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ProductCardComponent, Product } from '../../shared/product-card/product-card.component';
+import { ProductCardComponent } from '../../shared/product-card/product-card.component';
+import { Product } from '../../core/models/product.model';
 import { ProductService } from '../../core/services/product.service';
 
 @Component({
