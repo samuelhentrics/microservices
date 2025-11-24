@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: users
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./db/init-db:/docker-entrypoint-initdb.d:ro
+      - ./back/authentification/db/init-db:/docker-entrypoint-initdb.d:ro
     ports:
       - "5432:5432"
 
@@ -51,5 +51,33 @@ services:
     volumes:
       - ./deploy/nginx/default.conf:/etc/nginx/nginx.conf:ro
 
+  grafana:
+    image: grafana/grafana:9.5.0
+    restart: unless-stopped
+    depends_on:
+      - db-authentification
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  pgadmin:
+    image: dpage/pgadmin4:7
+    restart: unless-stopped
+    depends_on:
+      - db-authentification
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@example.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
 volumes:
   db_data:
+  grafana_data:
+  pgadmin_data:
