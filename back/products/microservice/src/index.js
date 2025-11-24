@@ -9,7 +9,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+app.get('/api/products/health', (req, res) => res.json({ ok: true }));
 
 // List products with optional simple filters
 app.get('/api/products', async (req, res) => {

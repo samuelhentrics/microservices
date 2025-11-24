@@ -1,0 +1,83 @@
+<div class="max-w-4xl mx-auto p-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <h1 class="text-2xl font-bold mb-2">Statut des services</h1>
+    <p class="text-sm text-gray-600 mb-4">Vérifie rapidemment la disponibilité et la latence des services backend.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <!-- Auth card -->
+      <div class="p-4 rounded border hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-semibold">Auth Service</h2>
+            <div class="text-xs text-gray-500">Endpoint: <code class="bg-gray-100 px-1 rounded">{{ environment.apiUrl }}/auth/health</code></div>
+          </div>
+          <div>
+            <ng-container *ngIf="auth === null">
+              <div class="inline-flex items-center gap-2 text-gray-500"><svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="opacity-75"></path></svg> Chargement...</div>
+            </ng-container>
+            <ng-container *ngIf="auth">
+              <span [ngClass]="auth.ok ? 'inline-block bg-green-100 text-green-800 px-3 py-1 rounded' : 'inline-block bg-red-100 text-red-800 px-3 py-1 rounded'">
+                {{ auth.ok ? 'OK' : 'Erreur' }}
+              </span>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="mt-3 text-sm text-gray-700">
+          <div *ngIf="auth && auth.timeMs !== undefined">Latence: <strong>{{ auth.timeMs }} ms</strong></div>
+          <div *ngIf="auth && auth.checkedAt">Dernier test: <em>{{ auth.checkedAt }}</em></div>
+          <div *ngIf="auth && auth.body" class="mt-3">
+            <details class="bg-gray-50 p-2 rounded">
+              <summary class="cursor-pointer text-sm">Réponse (détails)</summary>
+              <pre class="text-xs mt-2 overflow-auto">{{ auth.body | json }}</pre>
+            </details>
+          </div>
+          <div *ngIf="auth && auth.error" class="text-red-600 mt-2">{{ auth.error }}</div>
+        </div>
+
+        <div class="mt-4">
+          <button class="px-3 py-1 bg-blue-600 text-white rounded" (click)="pingAuth()">Re-tester</button>
+        </div>
+      </div>
+
+      <!-- Products card -->
+      <div class="p-4 rounded border hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-semibold">Products Service</h2>
+            <div class="text-xs text-gray-500">Endpoint: <code class="bg-gray-100 px-1 rounded">{{ environment.apiUrl }}/products/random</code></div>
+          </div>
+          <div>
+            <ng-container *ngIf="products === null">
+              <div class="inline-flex items-center gap-2 text-gray-500"><svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="opacity-75"></path></svg> Chargement...</div>
+            </ng-container>
+            <ng-container *ngIf="products">
+              <span [ngClass]="products.ok ? 'inline-block bg-green-100 text-green-800 px-3 py-1 rounded' : 'inline-block bg-red-100 text-red-800 px-3 py-1 rounded'">
+                {{ products.ok ? 'OK' : 'Erreur' }}
+              </span>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="mt-3 text-sm text-gray-700">
+          <div *ngIf="products && products.timeMs !== undefined">Latence: <strong>{{ products.timeMs }} ms</strong></div>
+          <div *ngIf="products && products.checkedAt">Dernier test: <em>{{ products.checkedAt }}</em></div>
+          <div *ngIf="products && products.body" class="mt-3">
+            <details class="bg-gray-50 p-2 rounded">
+              <summary class="cursor-pointer text-sm">Réponse (aperçu)</summary>
+              <pre class="text-xs mt-2 overflow-auto">{{ products.body | json }}</pre>
+            </details>
+          </div>
+          <div *ngIf="products && products.error" class="text-red-600 mt-2">{{ products.error }}</div>
+        </div>
+
+        <div class="mt-4 flex gap-2">
+          <button class="px-3 py-1 bg-blue-600 text-white rounded" (click)="pingProducts()">Re-tester</button>
+          <button class="px-3 py-1 bg-gray-200 text-gray-800 rounded" (click)="pingProducts();">Tester list (/products)</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
