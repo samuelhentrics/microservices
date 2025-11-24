@@ -68,7 +68,7 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const hashed = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      'INSERT INTO users (username, email, password_hash, provider_google) VALUES ($1, $2, $3, $4) RETURNING id, username, email, created_at',
+      'INSERT INTO users (username, email, password_hash, provider_google) VALUES ($1, $2, $3, $4) RETURNING id, username, email, picture, created_at',
       [username, email, hashed, false]
     );
     const user = result.rows[0];
@@ -87,7 +87,7 @@ app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Missing fields' });
   try {
-    const result = await pool.query('SELECT id, username, email, password_hash FROM users WHERE email=$1', [email]);
+    const result = await pool.query('SELECT id, username, email, password_hash, picture FROM users WHERE email=$1', [email]);
     if (result.rows.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
     const user = result.rows[0];
     const match = await bcrypt.compare(password, user.password_hash || '');
@@ -102,7 +102,7 @@ app.post('/api/auth/login', async (req, res) => {
       console.warn('Failed to record login log', e);
     }
 
-    res.json({ token, user: { id: user.id, username: user.username, email: user.email } });
+    res.json({ token, user: { id: user.id, username: user.username, email: user.email, picture: user.picture || null } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal error' });
@@ -147,7 +147,7 @@ app.post('/api/auth/google', async (req, res) => {
     const picture = payload.picture || null;
 
     // Try to find existing user by google_id or email
-    let result = await pool.query('SELECT id, username, email FROM users WHERE google_id=$1 OR email=$2', [providerId, email]);
+    let result = await pool.query('SELECT id, username, email, picture FROM users WHERE google_id=$1 OR email=$2', [providerId, email]);
     let user;
     if (result.rows.length > 0) {
       user = result.rows[0];
@@ -155,7 +155,7 @@ app.post('/api/auth/google', async (req, res) => {
       await pool.query('UPDATE users SET provider_google=$1, google_id=$2, picture=$3, last_login=NOW() WHERE id=$4', [true, providerId, picture, user.id]);
     } else {
       // create user with google linkage
-      result = await pool.query('INSERT INTO users (username, email, provider_google, google_id, picture, created_at, last_login) VALUES ($1,$2,$3,$4,$5,NOW(),NOW()) RETURNING id, username, email', [username, email, true, providerId, picture]);
+      result = await pool.query('INSERT INTO users (username, email, provider_google, google_id, picture, created_at, last_login) VALUES ($1,$2,$3,$4,$5,NOW(),NOW()) RETURNING id, username, email, picture', [username, email, true, providerId, picture]);
       user = result.rows[0];
     }
 
