@@ -27,8 +27,8 @@
       <!-- Profile & Address compact -->
       <aside class="bg-white shadow rounded-lg p-6 space-y-6">
         <!-- Compact profile card -->
-        <div class="flex items-center gap-4">
-          <img [src]="picturePreview || currentUser?.picture || '/logo.png'" alt="avatar" class="w-16 h-16 rounded-full object-cover border-2 border-red-500">
+          <div class="flex items-center gap-4">
+          <img [src]="currentUser?.picture" (error)="onImgError($event)" alt="avatar" class="w-16 h-16 rounded-full object-cover border-2 border-red-500">
           <div class="flex-1">
             <div class="font-medium">{{ currentUser?.username }}</div>
             <div class="text-sm text-gray-600">{{ currentUser?.email }}</div>
@@ -43,8 +43,8 @@
         <div *ngIf="editingProfile" class="border rounded p-3 bg-gray-50">
           <form (ngSubmit)="saveProfile()" class="space-y-3">
             <div class="flex items-center gap-3">
-              <div class="w-20 h-20">
-                <img [src]="picturePreview || model.picture || currentUser?.picture || '/logo.png'" class="w-20 h-20 rounded-full object-cover" />
+                <div class="w-20 h-20">
+                <img [src]="currentUser?.picture" (error)="onImgError($event)" class="w-20 h-20 rounded-full object-cover" />
               </div>
               <div class="flex-1">
                 <label class="block text-sm text-gray-700">Pseudo</label>

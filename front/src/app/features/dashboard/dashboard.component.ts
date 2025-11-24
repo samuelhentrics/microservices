@@ -125,4 +125,9 @@ export class DashboardComponent implements OnInit {
     };
     void prepareAndSend();
   }
+
+  onImgError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    if (img) img.src = '/default-avatar.jpg';
+  }
 }

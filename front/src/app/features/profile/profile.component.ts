@@ -16,7 +16,7 @@ import { environment } from '../../../environments/environment';
       <h2 class="text-2xl font-bold text-gray-800 mb-4">Mon profil</h2>
 
       <div class="flex items-center space-x-6">
-        <img *ngIf="user?.picture; else emptyAvatar" [src]="user?.picture" alt="avatar" class="w-24 h-24 rounded-full object-cover border-2 border-red-500">
+        <img [src]="picturePreview || user?.picture || '/default-avatar.png'" (error)="onImgError($event)" alt="avatar" class="w-24 h-24 rounded-full object-cover border-2 border-red-500">
         <ng-template #emptyAvatar>
           <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">A</div>
         </ng-template>
@@ -51,6 +51,13 @@ import { environment } from '../../../environments/environment';
         <div>
           <label class="block text-sm font-medium text-gray-700">URL Photo de profil</label>
           <input [(ngModel)]="model.picture" name="picture" class="mt-1 block w-full border rounded px-3 py-2" />
+          <div class="mt-2">
+            <label class="block text-sm font-medium text-gray-700">Ou importer un fichier</label>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="mt-1" />
+            <div *ngIf="picturePreview" class="mt-2">
+              <img [src]="picturePreview" class="w-24 h-24 rounded-full object-cover border-2 border-red-500" (error)="onImgError($event)" />
+            </div>
+          </div>
         </div>
 
         <div class="flex justify-end space-x-2">
@@ -76,6 +83,11 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.loadProfile();
     this.authService.currentUser$.subscribe(u => this.user = u);
+  }
+
+  onImgError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    if (img) img.src = '/default-avatar.png';
   }
 
   toggleEdit(): void {

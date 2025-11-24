@@ -45,6 +45,7 @@ import { AuthService } from '../../core/services/auth.service';
 
                 <img 
                   [src]="user?.picture || '/default-avatar.png'" 
+                  (error)="onImgError($event)"
                   alt="avatar" 
                   class="w-8 h-8 rounded-full object-cover border" />
 
@@ -90,6 +91,11 @@ export class NavbarComponent {
   }
 
   isAuthenticated = () => this.auth.isAuthenticated();
+
+  onImgError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    if (img) img.src = '/default-avatar.jpg';
+  }
 
   logout(): void {
     this.auth.logout();
