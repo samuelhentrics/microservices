@@ -27,3 +27,13 @@ CREATE TABLE IF NOT EXISTS addresses (
   country VARCHAR(100),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Logs for user activity (e.g., logins) to track IP and user agent
+CREATE TABLE IF NOT EXISTS logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  ip VARCHAR(100),
+  user_agent TEXT,
+  event VARCHAR(50) DEFAULT 'login',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

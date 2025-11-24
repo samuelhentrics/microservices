@@ -10,7 +10,19 @@ require('dotenv').config();
 
 const app = express();
 app.use(helmet());
-app.use(cors());
+// Configure CORS to allow the frontend and common local dev origins.
+// We allow requests with no Origin (curl, server-to-server) and any http://localhost:* origins for dev.
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // non-browser requests
+    // allow configured FRONT_URL
+    if (origin === FRONT_URL) return callback(null, true);
+    // allow any localhost origin (development convenience)
+    if (origin.startsWith('http://localhost')) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
@@ -20,6 +32,15 @@ const ALLOWED_GOOGLE_CLIENT_IDS = (process.env.GOOGLE_CLIENT_ID || '').split(','
 const FRONT_URL = process.env.FRONT_URL || 'http://localhost:4200';
 
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+function getClientIp(req) {
+  // Prefer X-Forwarded-For when behind proxy/load-balancer
+  const xff = req.headers['x-forwarded-for'];
+  if (xff && typeof xff === 'string') return xff.split(',')[0].trim();
+  if (req.ip) return req.ip;
+  if (req.connection && req.connection.remoteAddress) return req.connection.remoteAddress;
+  return null;
+}
 
 function signToken(user) {
   return jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
@@ -72,6 +93,15 @@ app.post('/api/auth/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password_hash || '');
     if (!match) return res.status(401).json({ error: 'Invalid credentials' });
     const token = signToken(user);
+    // record a login event
+    try {
+      const ip = getClientIp(req);
+      const ua = req.headers['user-agent'] || null;
+      await pool.query('INSERT INTO logs (user_id, ip, user_agent, event, created_at) VALUES ($1,$2,$3,$4,NOW())', [user.id, ip, ua, 'login']);
+    } catch (e) {
+      console.warn('Failed to record login log', e);
+    }
+
     res.json({ token, user: { id: user.id, username: user.username, email: user.email } });
   } catch (err) {
     console.error(err);
@@ -130,6 +160,15 @@ app.post('/api/auth/google', async (req, res) => {
     }
 
     const token = signToken(user);
+    // record a login event for Google sign-in
+    try {
+      const ip = getClientIp(req);
+      const ua = req.headers['user-agent'] || null;
+      await pool.query('INSERT INTO logs (user_id, ip, user_agent, event, created_at) VALUES ($1,$2,$3,$4,NOW())', [user.id, ip, ua, 'google_login']);
+    } catch (e) {
+      console.warn('Failed to record google login log', e);
+    }
+
     res.json({ token, user });
   } catch (err) {
     console.error('Google auth error', err);
@@ -147,6 +186,21 @@ app.get('/api/users/me', authenticateJWT, async (req, res) => {
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     res.json({ user: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Get current user's logs (recent)
+app.get('/api/users/me/logs', authenticateJWT, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await pool.query(
+      'SELECT id, ip, user_agent AS "userAgent", event, created_at AS "createdAt" FROM logs WHERE user_id = $1 ORDER BY created_at DESC LIMIT 100',
+      [userId]
+    );
+    res.json({ logs: result.rows });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal error' });
