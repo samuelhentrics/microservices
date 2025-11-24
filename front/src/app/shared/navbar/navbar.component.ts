@@ -25,6 +25,11 @@ import { AuthService } from '../../core/services/auth.service';
               Accueil
             </a>
 
+            <!-- Produits -->
+            <a routerLink="/products" class="text-sm text-gray-700 hover:text-red-600">
+              Produits
+            </a>
+
             <!-- NON AUTHENTIFIÉ: bouton Se connecter -->
             <a *ngIf="!isAuthenticated()" 
                routerLink="/auth/login"
