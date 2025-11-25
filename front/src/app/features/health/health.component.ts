@@ -68,7 +68,7 @@ export class HealthComponent {
     console.log('[health] pingAuth ->', url);
     // Fetch latest and recent history for auth
     this.auth = await this.fetchHistory('auth');
-    this.authHistory = await this.fetchHistorySeries('auth', 24);
+    this.authHistory = await this.fetchHistorySeries('auth', 50);
     console.log('[health] auth result ->', this.auth);
 
     this.cdr.detectChanges();
@@ -85,7 +85,7 @@ export class HealthComponent {
     }
 
     // get history 
-    this.productsHistory = await this.fetchHistorySeries('products', 24);
+    this.productsHistory = await this.fetchHistorySeries('products', 550);
 
     this.cdr.detectChanges();
   }
