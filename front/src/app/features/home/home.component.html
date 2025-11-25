@@ -31,7 +31,25 @@
             [queryParams]="{category: item.cat}"
             class="bg-white/95 p-4 rounded-lg flex flex-col items-center text-center hover:shadow transition-transform transform hover:-translate-y-1">
 
-            <div class="text-3xl">{{ item.icon }}</div>
+            <div class="w-24 h-14 flex items-center justify-center rounded-md overflow-hidden">
+              <img *ngIf="item.cat === 'fromages'"
+                src="https://lh5.googleusercontent.com/proxy/VSPOiuG2I95FIAcQi8tE6Fpdyed0LXh56E03eDDAwSkH14w7qhiRYGowW1AGN-O5sTWVnPNYgnAm5ihatthPYlekOIqe9hNAwg"
+                alt="fromage" class="w-full h-full object-contain rounded-md p-1" />
+
+              <img *ngIf="item.cat === 'pates'"
+                src="/pate.png"
+                alt="pate" class="w-full h-full object-contain rounded-md p-1" />
+
+              <img *ngIf="item.cat === 'saucissons'"
+                src="https://static.vecteezy.com/system/resources/thumbnails/015/211/984/small/cured-salami-sausage-with-cut-out-isolated-on-background-transparent-png.png"
+                alt="saucisson" class="w-full h-full object-contain rounded-md p-1" />
+
+              <img *ngIf="item.cat === 'jambons'"
+                src="/jambon.png"
+                alt="jambon" class="w-full h-full object-contain rounded-md p-1" />
+
+              <div *ngIf="!item.cat" class="text-2xl">{{ item.label.charAt(0) }}</div>
+            </div>
             <div class="font-semibold mt-2 text-gray-800">{{ item.label }}</div>
             <p class="text-xs text-gray-500 mt-1">{{ item.desc }}</p>
           </a>
