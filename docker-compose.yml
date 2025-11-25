@@ -46,6 +46,31 @@ services:
     depends_on:
       - db-products
 
+  db-monitoring:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: monitoring
+    volumes:
+      - db_monitoring_data:/var/lib/postgresql/data
+      - ./back/monitoring/db/init-db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5434:5432"
+
+  monitoring:
+    build:
+      context: ./back/monitoring/microservice
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://user:password@db-monitoring:5432/monitoring
+      PORT: 3000
+    depends_on:
+      - db-monitoring
+      - microservice-authentification
+      - products
+
   front:
     build:
       context: ./front
@@ -105,3 +130,4 @@ volumes:
   grafana_data:
   pgadmin_data:
   db_products_data:
+  db_monitoring_data:

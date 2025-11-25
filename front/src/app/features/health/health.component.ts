@@ -16,7 +16,7 @@ type PingResult = {
 @Component({
   selector: 'app-health',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './health.component.html'
 })
 export class HealthComponent {
@@ -27,6 +27,10 @@ export class HealthComponent {
 
   auth: PingResult | null = null;
   products: PingResult | null = null;
+  monitoring: PingResult | null = null;
+  // history arrays for rendering bars
+  authHistory: PingResult[] = [];
+  productsHistory: PingResult[] = [];
 
   constructor() {
     this.pingAll();
@@ -62,8 +66,11 @@ export class HealthComponent {
     this.auth = null;
     const url = `${environment.apiUrl}/auth/health`;
     console.log('[health] pingAuth ->', url);
-    this.auth = await this.doPing(url);
+    // Fetch latest and recent history for auth
+    this.auth = await this.fetchHistory('auth');
+    this.authHistory = await this.fetchHistorySeries('auth', 24);
     console.log('[health] auth result ->', this.auth);
+
     this.cdr.detectChanges();
   }
 
@@ -72,24 +79,75 @@ export class HealthComponent {
     const url = `${environment.apiUrl}/products/health`;
     // products microservice provides /api/health (not /products/health) — call both possibilities
     const candidate1 = `${environment.apiUrl}/products/health`;
-    const candidate2 = `${environment.apiUrl}/products`;
-
-    // try candidate1, if 404 or error, try /products/random
-    console.log('[health] pingProducts try1 ->', candidate1);
     this.products = await this.doPing(candidate1);
-    console.log('[health] products result try1 ->', this.products);
     if (!this.products.ok) {
-      // try products root /api/products (list)
-      const alt = `${environment.apiUrl}/products`;
-      console.log('[health] pingProducts try2 ->', alt);
-      this.products = await this.doPing(alt);
-      console.log('[health] products result try2 ->', this.products);
+        console.log('[health] products failed');
     }
+
+    // get history 
+    this.productsHistory = await this.fetchHistorySeries('products', 24);
+
+    this.cdr.detectChanges();
+  }
+
+  async pingMonitoring() {
+    this.monitoring = null;
+    const url = `${environment.apiUrl}/monitoring/health`;
+    console.log('[health] pingMonitoring ->', url);
+
+    this.monitoring = await this.fetchHistory('monitoring');
+    console.log('[health] monitoring result ->', this.monitoring);
     this.cdr.detectChanges();
   }
 
   pingAll() {
     this.pingAuth();
     this.pingProducts();
+    //this.pingMonitoring();
+  }
+
+  // Query the monitoring service for the most recent log for `service`
+  private async fetchHistory(service: string): Promise<PingResult> {
+    const url = `${environment.apiUrl}/monitoring/logs?service=${encodeURIComponent(service)}&limit=1`;
+    try {
+      const resp = await firstValueFrom(this.http.get<any>(url));
+      const rows = resp?.rows || [];
+      if (rows.length === 0) return { ok: false, error: 'No history', checkedAt: new Date().toISOString() };
+      const r = rows[0];
+      // Map DB columns to PingResult
+      const checkedAt = r.checked_at || r.checkedAt || new Date().toISOString();
+      return {
+        ok: !!r.ok,
+        status: r.status ?? undefined,
+        timeMs: r.time_ms ?? r.timeMs ?? undefined,
+        body: r.body ?? undefined,
+        error: r.error ?? undefined,
+        checkedAt: checkedAt
+      };
+    } catch (err: any) {
+      return { ok: false, error: err?.message || String(err), checkedAt: new Date().toISOString() };
+    }
+  }
+
+  // Fetch last `limit` entries for a service, ordered oldest->newest
+  private async fetchHistorySeries(service: string, limit = 24): Promise<PingResult[]> {
+    const url = `${environment.apiUrl}/monitoring/logs?service=${encodeURIComponent(service)}&limit=${limit}`;
+    try {
+      const resp = await firstValueFrom(this.http.get<any>(url));
+      const rows = resp?.rows || [];
+      // rows come newest first, we want oldest -> newest for display
+      const ordered = rows.slice().reverse();
+      return ordered.map((r: any) => ({
+        ok: !!r.ok,
+        status: r.status ?? undefined,
+        timeMs: r.time_ms ?? undefined,
+        body: r.body ?? undefined,
+        error: r.error ?? undefined,
+        checkedAt: r.checked_at || r.checkedAt || undefined
+      }));
+    } catch (err: any) {
+      // return an array with a single error entry
+      return [{ ok: false, error: err?.message || String(err), checkedAt: new Date().toISOString() }];
+    }
   }
 }

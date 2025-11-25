@@ -1,83 +1,66 @@
-<div class="max-w-4xl mx-auto p-6">
-  <div class="bg-white rounded-lg shadow p-6">
-    <h1 class="text-2xl font-bold mb-2">Statut des services</h1>
-    <p class="text-sm text-gray-600 mb-4">Vérifie rapidemment la disponibilité et la latence des services backend.</p>
+<div class="max-w-3xl mx-auto p-6">
+  <div class="bg-white rounded-lg shadow p-4">
+    <h1 class="text-xl font-semibold mb-4">Suivi des services</h1>
+    <p class="text-sm text-gray-600 mb-4">Affichage compact des services supervisés (auth & products). Pas de détails de réponse.</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      <!-- Auth card -->
-      <div class="p-4 rounded border hover:shadow-sm transition">
+    <div class="space-y-3">
+      <!-- Auth line -->
+      <div class="flex flex-col p-2 border rounded">
         <div class="flex items-center justify-between">
-          <div>
-            <h2 class="font-semibold">Auth Service</h2>
-            <div class="text-xs text-gray-500">Endpoint: <code class="bg-gray-100 px-1 rounded">{{ environment.apiUrl }}/auth/health</code></div>
+          <div class="flex items-center gap-4">
+            <div class="font-medium">Auth</div>
+            <div *ngIf="auth === null" class="text-sm text-gray-500">Chargement…</div>
+            <div *ngIf="auth">
+              <i [ngClass]="auth.ok ? 'fa fa-check-circle text-green-600' : 'fa fa-times-circle text-red-600'" aria-hidden="true"></i>
+            </div>
           </div>
-          <div>
-            <ng-container *ngIf="auth === null">
-              <div class="inline-flex items-center gap-2 text-gray-500"><svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="opacity-75"></path></svg> Chargement...</div>
-            </ng-container>
-            <ng-container *ngIf="auth">
-              <span [ngClass]="auth.ok ? 'inline-block bg-green-100 text-green-800 px-3 py-1 rounded' : 'inline-block bg-red-100 text-red-800 px-3 py-1 rounded'">
-                {{ auth.ok ? 'OK' : 'Erreur' }}
-              </span>
-            </ng-container>
+          <div class="flex items-center gap-4 text-xs text-gray-600">
+            <div *ngIf="auth && auth.timeMs !== undefined">{{ auth.timeMs }}ms</div>
+            <div *ngIf="auth && auth.checkedAt">{{ auth.checkedAt | date:'short' }}</div>
           </div>
         </div>
 
-        <div class="mt-3 text-sm text-gray-700">
-          <div *ngIf="auth && auth.timeMs !== undefined">Latence: <strong>{{ auth.timeMs }} ms</strong></div>
-          <div *ngIf="auth && auth.checkedAt">Dernier test: <em>{{ auth.checkedAt }}</em></div>
-          <div *ngIf="auth && auth.body" class="mt-3">
-            <details class="bg-gray-50 p-2 rounded">
-              <summary class="cursor-pointer text-sm">Réponse (détails)</summary>
-              <pre class="text-xs mt-2 overflow-auto">{{ auth.body | json }}</pre>
-            </details>
+        <!-- History squares -->
+        <div *ngIf="authHistory?.length" class="mt-2">
+          <div class="flex items-center gap-1">
+            <ng-container *ngFor="let h of authHistory">
+              <div class="w-3 h-3 rounded-sm" [title]="(h.checkedAt | date:'short') + (h.error ? ' - ' + h.error : '')"
+                   [ngClass]="h.ok ? 'bg-green-600' : (h.error ? 'bg-red-600' : 'bg-gray-300')"></div>
+            </ng-container>
           </div>
-          <div *ngIf="auth && auth.error" class="text-red-600 mt-2">{{ auth.error }}</div>
-        </div>
-
-        <div class="mt-4">
-          <button class="px-3 py-1 bg-blue-600 text-white rounded" (click)="pingAuth()">Re-tester</button>
         </div>
       </div>
 
-      <!-- Products card -->
-      <div class="p-4 rounded border hover:shadow-sm transition">
+      <!-- Products line -->
+      <div class="flex flex-col p-2 border rounded">
         <div class="flex items-center justify-between">
-          <div>
-            <h2 class="font-semibold">Products Service</h2>
-            <div class="text-xs text-gray-500">Endpoint: <code class="bg-gray-100 px-1 rounded">{{ environment.apiUrl }}/products/random</code></div>
+          <div class="flex items-center gap-4">
+            <div class="font-medium">Products</div>
+            <div *ngIf="products === null" class="text-sm text-gray-500">Chargement…</div>
+            <div *ngIf="products">
+              <i [ngClass]="products.ok ? 'fa fa-check-circle text-green-600' : 'fa fa-times-circle text-red-600'" aria-hidden="true"></i>
+            </div>
           </div>
-          <div>
-            <ng-container *ngIf="products === null">
-              <div class="inline-flex items-center gap-2 text-gray-500"><svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="opacity-75"></path></svg> Chargement...</div>
-            </ng-container>
-            <ng-container *ngIf="products">
-              <span [ngClass]="products.ok ? 'inline-block bg-green-100 text-green-800 px-3 py-1 rounded' : 'inline-block bg-red-100 text-red-800 px-3 py-1 rounded'">
-                {{ products.ok ? 'OK' : 'Erreur' }}
-              </span>
-            </ng-container>
+          <div class="flex items-center gap-4 text-xs text-gray-600">
+            <div *ngIf="products && products.timeMs !== undefined">{{ products.timeMs }}ms</div>
+            <div *ngIf="products && products.checkedAt">{{ products.checkedAt | date:'short' }}</div>
           </div>
         </div>
 
-        <div class="mt-3 text-sm text-gray-700">
-          <div *ngIf="products && products.timeMs !== undefined">Latence: <strong>{{ products.timeMs }} ms</strong></div>
-          <div *ngIf="products && products.checkedAt">Dernier test: <em>{{ products.checkedAt }}</em></div>
-          <div *ngIf="products && products.body" class="mt-3">
-            <details class="bg-gray-50 p-2 rounded">
-              <summary class="cursor-pointer text-sm">Réponse (aperçu)</summary>
-              <pre class="text-xs mt-2 overflow-auto">{{ products.body | json }}</pre>
-            </details>
+        <!-- History squares -->
+        <div *ngIf="productsHistory?.length" class="mt-2">
+          <div class="flex items-center gap-1">
+            <ng-container *ngFor="let h of productsHistory">
+              <div class="w-3 h-3 rounded-sm" [title]="(h.checkedAt | date:'short') + (h.error ? ' - ' + h.error : '')"
+                   [ngClass]="h.ok ? 'bg-green-600' : (h.error ? 'bg-red-600' : 'bg-gray-300')"></div>
+            </ng-container>
           </div>
-          <div *ngIf="products && products.error" class="text-red-600 mt-2">{{ products.error }}</div>
-        </div>
-
-        <div class="mt-4 flex gap-2">
-          <button class="px-3 py-1 bg-blue-600 text-white rounded" (click)="pingProducts()">Re-tester</button>
-          <button class="px-3 py-1 bg-gray-200 text-gray-800 rounded" (click)="pingProducts();">Tester list (/products)</button>
         </div>
       </div>
+    </div>
 
+    <div class="mt-4 flex gap-2">
+      <button class="px-3 py-1 bg-blue-600 text-white rounded" (click)="pingAll()">Re-tester tout</button>
     </div>
   </div>
 </div>
