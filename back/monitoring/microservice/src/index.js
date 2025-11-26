@@ -15,7 +15,8 @@ const PORT = process.env.PORT || 3000;
 // Targets to monitor (internal Docker DNS names)
 const TARGETS = [
   { name: 'auth', url: process.env.AUTH_URL || 'http://microservice-authentification:3000/api/auth/health' },
-  { name: 'products', url: process.env.PRODUCTS_URL || 'http://products:3000/api/products/health' }
+  { name: 'products', url: process.env.PRODUCTS_URL || 'http://products:3000/api/products/health' },
+  { name: 'carts', url: process.env.CARTS_URL || 'http://carts:3000/api/carts/health' },
 ];
 
 async function recordResult({ service_name, ok, status, time_ms, body, error }) {

@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
+import { RouterLink } from '@angular/router';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { ProductService } from '../../core/services/product.service';
 import { Product } from '../../core/models/product.model';
 import { AuthService } from '../../core/services/auth.service';
@@ -11,12 +12,13 @@ import { Cart, CartItem } from '../../core/models/cart.model';
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, RouterLink]
 })
 export class CartComponent {
   private auth = inject(AuthService);
   private cartService = inject(CartService);
   private productService = inject(ProductService);
+  private subs: Subscription[] = [];
 
   public cart: Cart | null = null;
   public items: CartItem[] = [];
@@ -176,6 +178,36 @@ export class CartComponent {
   }
 
   ngOnInit() {
-    this.loadCart();
+    // Subscribe first so selected cart (BehaviorSubject) takes precedence.
+    let initialHandled = false;
+    const s = this.cartService.selectedCart$.subscribe(async (cartId) => {
+      try {
+        initialHandled = true;
+        // handle case where selection is cleared
+        if (!cartId) {
+          this.cart = null;
+          this.items = [];
+          this.displayItems = [];
+          return;
+        }
+        // load the selected cart by id
+        const res: any = await firstValueFrom(this.cartService.getCartById(cartId));
+        this.cart = res.cart || null;
+        this.items = res.items || [];
+        await this.buildDisplayItems();
+      } catch (e) {
+        console.error('Failed to load selected cart', e);
+      }
+    });
+    this.subs.push(s);
+
+    // If no selected cart was emitted synchronously, load the user's default cart
+    if (!initialHandled) {
+      this.loadCart();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 }

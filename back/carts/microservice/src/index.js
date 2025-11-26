@@ -52,6 +52,65 @@ app.get('/api/carts', async (req, res) => {
   }
 });
 
+// List all carts for a user
+app.get('/api/carts/list', async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    if (!user_id) return res.status(400).json({ error: 'user_id required' });
+    // Return carts along with aggregated item count (sum of quantities)
+    const q = `
+      SELECT c.*, COALESCE(ci.item_count,0) as item_count
+      FROM carts c
+      LEFT JOIN (
+        SELECT cart_id, SUM(quantity) as item_count
+        FROM cart_items
+        GROUP BY cart_id
+      ) ci ON ci.cart_id = c.id
+      WHERE c.user_id = $1
+      ORDER BY c.created_at DESC
+    `;
+    const cartsRes = await db.query(q, [user_id]);
+    res.json({ carts: cartsRes.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'internal' });
+  }
+});
+
+// Simple health
+app.get('/api/carts/health', (req, res) => res.json({ ok: true }));
+
+// Get cart by cart id (with items)
+app.get('/api/carts/:cartId', async (req, res) => {
+  try {
+    const { cartId } = req.params;
+    const cartRes = await db.query('SELECT * FROM carts WHERE id = $1', [cartId]);
+    const cart = cartRes.rows[0];
+    if (!cart) return res.status(404).json({ error: 'not_found' });
+    const itemsRes = await db.query('SELECT * FROM cart_items WHERE cart_id = $1', [cart.id]);
+    res.json({ cart, items: itemsRes.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'internal' });
+  }
+});
+
+// Delete a cart and its items
+app.delete('/api/carts/:cartId', async (req, res) => {
+  try {
+    const { cartId } = req.params;
+    await db.query('BEGIN');
+    await db.query('DELETE FROM cart_items WHERE cart_id = $1', [cartId]);
+    await db.query('DELETE FROM carts WHERE id = $1', [cartId]);
+    await db.query('COMMIT');
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    try { await db.query('ROLLBACK'); } catch (e) {}
+    res.status(500).json({ error: 'internal' });
+  }
+});
+
 // Add item to cart
 app.post('/api/carts/:cartId/items', async (req, res) => {
   try {
@@ -82,9 +141,6 @@ app.delete('/api/carts/:cartId/items/:itemId', async (req, res) => {
     res.status(500).json({ error: 'internal' });
   }
 });
-
-// Simple health
-app.get('/api/carts/health', (req, res) => res.json({ ok: true }));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('Carts microservice started on', port));

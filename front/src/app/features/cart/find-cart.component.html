@@ -1,18 +1,21 @@
 <div class="p-6 max-w-4xl mx-auto">
   <h2 class="text-2xl font-semibold mb-4">Récupérer un panier</h2>
 
-  <div class="mb-4">
-    <label class="block text-sm text-gray-700 mb-1">User ID</label>
-    <input [(ngModel)]="queryUserId" class="w-full border rounded px-3 py-2" placeholder="Saisis l'identifiant de l'utilisateur" />
-  </div>
-
-  <div class="flex gap-2 mb-6">
-    <button (click)="findByUser()" class="bg-blue-600 text-white px-3 py-2 rounded">Récupérer</button>
-    <button (click)="reset()" class="bg-gray-200 px-3 py-2 rounded">Réinitialiser</button>
-  </div>
-
   <div *ngIf="loading" class="text-gray-600">Chargement...</div>
   <div *ngIf="message" class="text-red-600 mb-4">{{ message }}</div>
+
+  <div *ngIf="carts && carts.length > 0" class="mb-4">
+    <h3 class="text-lg font-semibold mb-2">Paniers trouvés</h3>
+    <div class="space-y-2">
+      <div *ngFor="let c of carts" class="flex items-center justify-between border rounded p-3">
+        <div class="text-sm text-gray-700">créé: {{ c.created_at }} — <span class="text-gray-500">{{ c.item_count || 0 }} article(s)</span></div>
+        <div class="flex items-center gap-2">
+          <button (click)="loadCart(c.id)" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">Charger</button>
+          <button (click)="deleteCart(c.id)" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div *ngIf="cart" class="border rounded p-4">
     <div class="text-sm text-gray-500 mb-3">Panier: {{ cart.id }} — créé: {{ cart.created_at }}</div>

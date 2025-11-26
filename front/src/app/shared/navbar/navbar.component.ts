@@ -36,6 +36,10 @@ import { Subscription, firstValueFrom } from 'rxjs';
             <a routerLink="/cart" class="text-sm text-gray-700 hover:text-red-600">
               Panier <span *ngIf="itemsCount>0">({{ itemsCount }})</span>
             </a>
+            <!-- Mes paniers (Find) -->
+            <a *ngIf="isAuthenticated()" routerLink="/cart/find" class="text-sm text-gray-700 hover:text-red-600">
+              Mes paniers
+            </a>
 
             <!-- NON AUTHENTIFIÉ: bouton Se connecter -->
             <a *ngIf="!isAuthenticated()" 

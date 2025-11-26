@@ -28,9 +28,11 @@ export class HealthComponent {
   auth: PingResult | null = null;
   products: PingResult | null = null;
   monitoring: PingResult | null = null;
+  carts: PingResult | null = null;
   // history arrays for rendering bars
   authHistory: PingResult[] = [];
   productsHistory: PingResult[] = [];
+  cartsHistory: PingResult[] = [];
 
   constructor() {
     this.pingAll();
@@ -90,6 +92,23 @@ export class HealthComponent {
     this.cdr.detectChanges();
   }
 
+  async pingCarts() {
+    this.carts = null;
+    const url = `${environment.apiUrl}/carts/health`;
+    // cart microservice provides /api/health (not /cart/health) — call both possibilities
+    const candidate1 = `${environment.apiUrl}/carts/health`;
+    this.carts = await this.doPing(candidate1);
+    if (!this.carts.ok) {
+        console.log('[health] carts failed');
+    }
+
+    // get history 
+    this.cartsHistory = await this.fetchHistorySeries('carts', 550);
+
+    this.cdr.detectChanges();
+  }
+
+
   async pingMonitoring() {
     this.monitoring = null;
     const url = `${environment.apiUrl}/monitoring/health`;
@@ -103,6 +122,7 @@ export class HealthComponent {
   pingAll() {
     this.pingAuth();
     this.pingProducts();
+    this.pingCarts();
     //this.pingMonitoring();
   }
 

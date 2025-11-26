@@ -5,7 +5,7 @@
 
   <div class="mb-6 flex gap-4">
     <button (click)="createCart()" class="bg-blue-600 text-white px-3 py-1 rounded mr-2">Créer un panier</button>
-    <button (click)="loadCart()" class="bg-gray-200 px-3 py-1 rounded">Charger le panier</button>
+    <a routerLink="/cart/find" class="ml-2 px-3 py-1 rounded bg-gray-100 text-sm text-gray-700 hover:bg-gray-200">Voir autres paniers</a>
   </div>
 
   <div *ngIf="loading" class="text-gray-600">Chargement...</div>
