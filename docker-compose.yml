@@ -59,6 +59,19 @@ services:
     ports:
       - "5434:5432"
 
+  db-carts:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: carts
+    volumes:
+      - db_carts_data:/var/lib/postgresql/data
+      - ./back/carts/db/init-db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5435:5432"
+
   monitoring:
     build:
       context: ./back/monitoring/microservice
@@ -68,6 +81,18 @@ services:
       PORT: 3000
     depends_on:
       - db-monitoring
+      - microservice-authentification
+      - products
+
+  carts:
+    build:
+      context: ./back/carts/microservice
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://user:password@db-carts:5432/carts
+      PORT: 3000
+    depends_on:
+      - db-carts
       - microservice-authentification
       - products
 
@@ -94,6 +119,7 @@ services:
     depends_on:
       - front
       - microservice-authentification
+      - carts
     ports:
       - "80:80"
     volumes:
@@ -131,3 +157,4 @@ volumes:
   pgadmin_data:
   db_products_data:
   db_monitoring_data:
+  db_carts_data:

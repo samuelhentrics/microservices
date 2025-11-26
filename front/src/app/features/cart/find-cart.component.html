@@ -1,0 +1,39 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <h2 class="text-2xl font-semibold mb-4">Récupérer un panier</h2>
+
+  <div class="mb-4">
+    <label class="block text-sm text-gray-700 mb-1">User ID</label>
+    <input [(ngModel)]="queryUserId" class="w-full border rounded px-3 py-2" placeholder="Saisis l'identifiant de l'utilisateur" />
+  </div>
+
+  <div class="flex gap-2 mb-6">
+    <button (click)="findByUser()" class="bg-blue-600 text-white px-3 py-2 rounded">Récupérer</button>
+    <button (click)="reset()" class="bg-gray-200 px-3 py-2 rounded">Réinitialiser</button>
+  </div>
+
+  <div *ngIf="loading" class="text-gray-600">Chargement...</div>
+  <div *ngIf="message" class="text-red-600 mb-4">{{ message }}</div>
+
+  <div *ngIf="cart" class="border rounded p-4">
+    <div class="text-sm text-gray-500 mb-3">Panier: {{ cart.id }} — créé: {{ cart.created_at }}</div>
+
+    <div *ngIf="displayItems.length === 0" class="text-gray-700">Aucun article.</div>
+
+    <div *ngFor="let it of displayItems" class="flex gap-4 items-center py-3 border-b">
+      <img [src]="it.product.image || 'https://via.placeholder.com/96'" alt="{{ it.product.name }}" class="w-20 h-20 object-cover rounded" />
+      <div class="flex-1">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="font-semibold">{{ it.product.name }}</div>
+            <div class="text-sm text-gray-500">{{ it.product.category }}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-red-600 font-bold">{{ it.product.price | number:'1.2-2' }} €</div>
+            <div class="text-sm text-gray-500">Total: {{ (it.product.price * it.quantity) | number:'1.2-2' }} €</div>
+          </div>
+        </div>
+        <div class="mt-2 text-sm">Quantité: <strong>{{ it.quantity }}</strong></div>
+      </div>
+    </div>
+  </div>
+</div>

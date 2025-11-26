@@ -1,7 +1,9 @@
-import { Component, inject, HostListener } from '@angular/core';
+import { Component, inject, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { CartService } from '../../core/services/cart.service';
+import { Subscription, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -28,6 +30,11 @@ import { AuthService } from '../../core/services/auth.service';
             <!-- Produits -->
             <a routerLink="/products" class="text-sm text-gray-700 hover:text-red-600">
               Produits
+            </a>
+
+            <!-- Panier -->
+            <a routerLink="/cart" class="text-sm text-gray-700 hover:text-red-600">
+              Panier <span *ngIf="itemsCount>0">({{ itemsCount }})</span>
             </a>
 
             <!-- NON AUTHENTIFIÉ: bouton Se connecter -->
@@ -82,6 +89,9 @@ import { AuthService } from '../../core/services/auth.service';
 export class NavbarComponent {
   public auth = inject(AuthService);
   private router = inject(Router);
+  private cartService = inject(CartService);
+  public itemsCount = 0;
+  private subs: Subscription[] = [];
 
   menuOpen = false;
 
@@ -100,5 +110,41 @@ export class NavbarComponent {
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/']);
+  }
+
+  ngOnInit() {
+    // subscribe to user changes and update cart count
+    const s = this.auth.currentUser$.subscribe(async (user) => {
+      if (user && user.id) {
+        try {
+          const res: any = await firstValueFrom(this.cartService.getCart(user.id));
+          this.itemsCount = (res?.items || []).reduce((s: number, it: any) => s + (it.quantity || 0), 0);
+        } catch (e) {
+          this.itemsCount = 0;
+        }
+      } else {
+        this.itemsCount = 0;
+      }
+    });
+    this.subs.push(s);
+    // refresh when the cart content changes
+    const s2 = this.cartService.cartUpdated$.subscribe(async () => {
+      const user = this.auth.currentUserValue;
+      if (user && user.id) {
+        try {
+          const res: any = await firstValueFrom(this.cartService.getCart(user.id));
+          this.itemsCount = (res?.items || []).reduce((s: number, it: any) => s + (it.quantity || 0), 0);
+        } catch (e) {
+          this.itemsCount = 0;
+        }
+      } else {
+        this.itemsCount = 0;
+      }
+    });
+    this.subs.push(s2);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 }
