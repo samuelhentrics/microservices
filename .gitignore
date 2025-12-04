@@ -8,5 +8,5 @@ dist/
 /.idea
 .vscode
 .DS_Store
-environments.development.ts
-environments.ts
+front/src/environments/environments.development.ts
+front/src/environmentsenvironments.ts
