@@ -14,8 +14,9 @@ services:
       - "5432:5432"
 
   microservice-authentification:
-    build:
-      context: ./back/authentification/microservice
+    #build:
+    #  context: ./back/authentification/microservice
+    image: samuelhentrics/microservices-microservice-authentification:latest
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://user:password@db-authentification:5432/users
@@ -37,8 +38,9 @@ services:
       - "5433:5432"
 
   products:
-    build:
-      context: ./back/products/microservice
+    #build:
+    #  context: ./back/products/microservice
+    image: samuelhentrics/microservices-products
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://user:password@db-products:5432/products
@@ -73,8 +75,9 @@ services:
       - "5435:5432"
 
   monitoring:
-    build:
-      context: ./back/monitoring/microservice
+    #build:
+    #  context: ./back/monitoring/microservice
+    image: samuelhentrics/microservices-monitoring
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://user:password@db-monitoring:5432/monitoring
@@ -85,8 +88,9 @@ services:
       - products
 
   carts:
-    build:
-      context: ./back/carts/microservice
+    #build:
+    #  context: ./back/carts/microservice
+    image: samuelhentrics/microservices-carts
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://user:password@db-carts:5432/carts
@@ -97,8 +101,9 @@ services:
       - products
 
   front:
-    build:
-      context: ./front
+    #build:
+    #  context: ./front
+    image: samuelhentrics/microservices-front
     restart: unless-stopped
     depends_on:
       - microservice-authentification
@@ -106,8 +111,6 @@ services:
       - NODE_ENV=development
     ports:
       - "4200:4200"
-    # Mount the front source for live edits and let the container run `ng serve`.
-    # This avoids rebuilding the image when you change TS/HTML/CSS.
     volumes:
       - ./front:/app
       - /app/node_modules
