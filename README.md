@@ -117,13 +117,3 @@ docker-compose.yml
 
 - The monitoring service uses environment variables like `CARTS_URL` to select which endpoint to probe — `docker-compose.yml` sets this to the container hostnames used inside the Compose network.
 - Use the nginx proxy for an environment close to production routing behavior; direct container ports are useful for debugging but can be confusing due to host port collisions.
-
----
-
-If you'd like, I can:
-
-- Add a `Makefile` or top-level npm scripts to simplify common tasks (start, stop, logs, build).
-- Add a short CONTRIBUTING.md with flows for running tests and making changes.
-
-Tell me which you'd prefer and I'll add it.
-
