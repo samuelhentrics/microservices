@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: users
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./db/init-db:/docker-entrypoint-initdb.d:ro
+      - ./back/authentification/db/init-db:/docker-entrypoint-initdb.d:ro
     ports:
       - "5432:5432"
 
@@ -22,6 +22,79 @@ services:
       PORT: 3000
     depends_on:
       - db-authentification
+
+  db-products:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: products
+    volumes:
+      - db_products_data:/var/lib/postgresql/data
+      - ./back/products/db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5433:5432"
+
+  products:
+    build:
+      context: ./back/products/microservice
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://user:password@db-products:5432/products
+      PORT: 3000
+    depends_on:
+      - db-products
+
+  db-monitoring:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: monitoring
+    volumes:
+      - db_monitoring_data:/var/lib/postgresql/data
+      - ./back/monitoring/db/init-db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5434:5432"
+
+  db-carts:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: carts
+    volumes:
+      - db_carts_data:/var/lib/postgresql/data
+      - ./back/carts/db/init-db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5435:5432"
+
+  monitoring:
+    build:
+      context: ./back/monitoring/microservice
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://user:password@db-monitoring:5432/monitoring
+      PORT: 3000
+    depends_on:
+      - db-monitoring
+      - microservice-authentification
+      - products
+
+  carts:
+    build:
+      context: ./back/carts/microservice
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://user:password@db-carts:5432/carts
+      PORT: 3000
+    depends_on:
+      - db-carts
+      - microservice-authentification
+      - products
 
   front:
     build:
@@ -46,10 +119,42 @@ services:
     depends_on:
       - front
       - microservice-authentification
+      - carts
     ports:
       - "80:80"
     volumes:
       - ./deploy/nginx/default.conf:/etc/nginx/nginx.conf:ro
 
+  grafana:
+    image: grafana/grafana:9.5.0
+    restart: unless-stopped
+    depends_on:
+      - db-authentification
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  pgadmin:
+    image: dpage/pgadmin4:7
+    restart: unless-stopped
+    depends_on:
+      - db-authentification
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@example.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
 volumes:
   db_data:
+  grafana_data:
+  pgadmin_data:
+  db_products_data:
+  db_monitoring_data:
+  db_carts_data:

@@ -67,4 +67,10 @@ export class AuthService {
   public processAuthResponse(response: AuthResponse): void {
     this.handleAuthResponse(response);
   }
+
+  // Update the current user locally (used after profile edits)
+  public updateCurrentUser(user: User): void {
+    this.storageService.setUser(user);
+    this.currentUserSubject.next(user);
+  }
 }

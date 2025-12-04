@@ -1,0 +1,90 @@
+<div class="max-w-3xl mx-auto p-6">
+  <div class="bg-white rounded-lg shadow p-4">
+    <h1 class="text-xl font-semibold mb-4">Suivi des services</h1>
+    <div class="space-y-3">
+      <!-- Auth line -->
+      <div class="flex flex-col p-2 border rounded">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="font-medium">Auth</div>
+            <div *ngIf="auth === null" class="text-sm text-gray-500">Chargement…</div>
+            <div *ngIf="auth">
+              <i [ngClass]="auth.ok ? 'fa fa-check-circle text-green-600' : 'fa fa-times-circle text-red-600'" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-gray-600">
+            <div *ngIf="auth && auth.timeMs !== undefined">{{ auth.timeMs }}ms</div>
+            <div *ngIf="auth && auth.checkedAt">{{ auth.checkedAt | date:'short' }}</div>
+          </div>
+        </div>
+
+        <!-- History squares -->
+        <div *ngIf="authHistory?.length" class="mt-2">
+          <div class="flex items-center gap-1">
+            <ng-container *ngFor="let h of authHistory">
+              <div class="w-3 h-3 rounded-sm" [title]="(h.checkedAt | date:'short') + (h.error ? ' - ' + h.error : '')"
+                   [ngClass]="h.ok ? 'bg-green-600' : (h.error ? 'bg-red-600' : 'bg-gray-300')"></div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products line -->
+      <div class="flex flex-col p-2 border rounded">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="font-medium">Products</div>
+            <div *ngIf="products === null" class="text-sm text-gray-500">Chargement…</div>
+            <div *ngIf="products">
+              <i [ngClass]="products.ok ? 'fa fa-check-circle text-green-600' : 'fa fa-times-circle text-red-600'" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-gray-600">
+            <div *ngIf="products && products.timeMs !== undefined">{{ products.timeMs }}ms</div>
+            <div *ngIf="products && products.checkedAt">{{ products.checkedAt | date:'short' }}</div>
+          </div>
+        </div>
+
+        <!-- History squares -->
+        <div *ngIf="productsHistory?.length" class="mt-2">
+          <div class="flex items-center gap-1">
+            <ng-container *ngFor="let h of productsHistory">
+              <div class="w-3 h-3 rounded-sm" [title]="(h.checkedAt | date:'short') + (h.error ? ' - ' + h.error : '')"
+                   [ngClass]="h.ok ? 'bg-green-600' : (h.error ? 'bg-red-600' : 'bg-gray-300')"></div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Cart line -->
+<div class="flex flex-col p-2 border rounded">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="font-medium">Carts</div>
+            <div *ngIf="carts === null" class="text-sm text-gray-500">Chargement…</div>
+            <div *ngIf="carts">
+              <i [ngClass]="carts.ok ? 'fa fa-check-circle text-green-600' : 'fa fa-times-circle text-red-600'" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-gray-600">
+            <div *ngIf="carts && carts.timeMs !== undefined">{{ carts.timeMs }}ms</div>
+            <div *ngIf="carts && carts.checkedAt">{{ carts.checkedAt | date:'short' }}</div>
+          </div>
+        </div>
+
+        <!-- History squares -->
+        <div *ngIf="cartsHistory?.length" class="mt-2">
+          <div class="flex items-center gap-1">
+            <ng-container *ngFor="let h of cartsHistory">
+              <div class="w-3 h-3 rounded-sm" [title]="(h.checkedAt | date:'short') + (h.error ? ' - ' + h.error : '')"
+                   [ngClass]="h.ok ? 'bg-green-600' : (h.error ? 'bg-red-600' : 'bg-gray-300')"></div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>

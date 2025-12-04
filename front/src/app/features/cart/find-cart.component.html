@@ -1,0 +1,42 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <h2 class="text-2xl font-semibold mb-4">Récupérer un panier</h2>
+
+  <div *ngIf="loading" class="text-gray-600">Chargement...</div>
+  <div *ngIf="message" class="text-red-600 mb-4">{{ message }}</div>
+
+  <div *ngIf="carts && carts.length > 0" class="mb-4">
+    <h3 class="text-lg font-semibold mb-2">Paniers trouvés</h3>
+    <div class="space-y-2">
+      <div *ngFor="let c of carts" class="flex items-center justify-between border rounded p-3">
+        <div class="text-sm text-gray-700">créé: {{ c.created_at }} — <span class="text-gray-500">{{ c.item_count || 0 }} article(s)</span></div>
+        <div class="flex items-center gap-2">
+          <button (click)="loadCart(c.id)" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">Charger</button>
+          <button (click)="deleteCart(c.id)" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="cart" class="border rounded p-4">
+    <div class="text-sm text-gray-500 mb-3">Panier: {{ cart.id }} — créé: {{ cart.created_at }}</div>
+
+    <div *ngIf="displayItems.length === 0" class="text-gray-700">Aucun article.</div>
+
+    <div *ngFor="let it of displayItems" class="flex gap-4 items-center py-3 border-b">
+      <img [src]="it.product.image || 'https://via.placeholder.com/96'" alt="{{ it.product.name }}" class="w-20 h-20 object-cover rounded" />
+      <div class="flex-1">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="font-semibold">{{ it.product.name }}</div>
+            <div class="text-sm text-gray-500">{{ it.product.category }}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-red-600 font-bold">{{ it.product.price | number:'1.2-2' }} €</div>
+            <div class="text-sm text-gray-500">Total: {{ (it.product.price * it.quantity) | number:'1.2-2' }} €</div>
+          </div>
+        </div>
+        <div class="mt-2 text-sm">Quantité: <strong>{{ it.quantity }}</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
