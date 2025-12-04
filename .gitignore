@@ -2,11 +2,7 @@ node_modules/
 back/authentification/microservice/node_modules/
 front/node_modules/
 back/authentification/microservice/.env
-front/src/environments/environment.ts
-front/src/environments/environment.development.ts
 dist/
 /.idea
 .vscode
 .DS_Store
-front/src/environments/environments.development.ts
-front/src/environmentsenvironments.ts
