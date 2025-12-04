@@ -16,7 +16,7 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true); // non-browser requests
     // allow configured FRONT_URL
-    if (origin === FRONT_URL) return callback(null, true);
+    if (origin.startsWith(FRONT_URL)) return callback(null, true);
     // allow any localhost origin (development convenience)
     if (origin.startsWith('http://localhost')) return callback(null, true);
     return callback(new Error('Not allowed by CORS'));
