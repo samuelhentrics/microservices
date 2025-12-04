@@ -16,7 +16,7 @@ services:
   microservice-authentification:
     #build:
     #  context: ./back/authentification/microservice
-    image: samuelhentrics/microservices-microservice-authentification:latest
+    image: samuelhentrics/microservice-authentification:latest
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://user:password@db-authentification:5432/users
